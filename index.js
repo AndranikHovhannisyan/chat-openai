@@ -4,11 +4,16 @@ const { Configuration, OpenAIApi } = require("openai");
 
 
 async function bootstrap() {
-    const questions = await DB.getQuestions()
+    try {
+        const questions = await DB.getQuestions()
 
-    for (const questionEntry of questions) {
-        const openAIChoice = await OpenAI.getChoice(questionEntry.question);
-        await DB.saveChoice(questionEntry.id, openAIChoice);
+        for (const questionEntry of questions) {
+            const openAIChoice = await OpenAI.getChoice(questionEntry.question);
+            await DB.saveChoice(questionEntry.id, openAIChoice);
+        }
+    }
+    catch(e) {
+        console.log(`Something went wrong. ${e.message}`)
     }
 
     await DB.close()
@@ -29,7 +34,7 @@ class OpenAI {
             model: process.env.OPENAI_MODEL,
             prompt: prompt,
             temperature: 0,
-            max_tokens: 20,
+            max_tokens: 2000,
         });
 
         return (response?.data?.choices && response?.data?.choices[0] && response?.data?.choices[0].text) || null
@@ -65,7 +70,7 @@ class DB {
     static async saveChoice(id, choice) {
         if (!DB.connection) await DB.connect()
         return new Promise((resolve, reject) => {
-            DB.connection.query(`UPDATE pages SET openai = '${choice}', is_crawled = true WHERE id = ${id}`, function (error, results, fields) {
+            DB.connection.query(`UPDATE pages SET openai = "${mysql.escape(choice)}", is_crawled = true WHERE id = ${id}`, function (error, results, fields) {
                 if (error) reject(error);
                 resolve(results);
             })
