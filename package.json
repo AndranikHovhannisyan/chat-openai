@@ -1,0 +1,17 @@
+{
+  "name": "chat-openai",
+  "version": "1.0.0",
+  "description": "A command line tool which is used to create a content based on chat open ai ",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andranik Hovhannisyan",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "mysql": "^2.18.1",
+    "openai": "^3.1.0"
+  }
+}
