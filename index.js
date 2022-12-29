@@ -56,7 +56,7 @@ class DB {
         if (!DB.connection) await DB.connect()
         return new Promise((resolve, reject) => {
             DB.connection.query('SELECT id, question FROM pages WHERE should_crawl IS TRUE AND is_crawled IS FALSE', function (error, results, fields) {
-                if (error) throw reject(error);
+                if (error) reject(error);
                 resolve(results);
             })
         });
@@ -66,10 +66,7 @@ class DB {
         if (!DB.connection) await DB.connect()
         return new Promise((resolve, reject) => {
             DB.connection.query(`UPDATE pages SET openai = '${choice}', is_crawled = true WHERE id = ${id}`, function (error, results, fields) {
-                if (error) {
-                    console.log(error)
-                    throw reject(error);
-                }
+                if (error) reject(error);
                 resolve(results);
             })
         });
